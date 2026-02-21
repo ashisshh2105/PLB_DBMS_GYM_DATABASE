@@ -1,0 +1,154 @@
+CREATE DATABASE Gym_Management_System;
+USE Gym_Management_System;
+
+#OWNER TABLE 
+CREATE TABLE Owner (
+    owner_id INT PRIMARY KEY AUTO_INCREMENT
+);
+SHOW TABLES;
+
+#2 MANAGER
+CREATE TABLE Manager (
+    manager_id INT PRIMARY KEY AUTO_INCREMENT,
+    owner_id INT,
+    FOREIGN KEY (owner_id) REFERENCES Owner(owner_id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+SHOW TABLES;
+
+#3 MEMBER
+CREATE TABLE Member (
+    member_id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL,
+    specialization VARCHAR(100),
+    manager_id INT,
+    FOREIGN KEY (manager_id) REFERENCES Manager(manager_id)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
+);
+SHOW TABLES;
+
+#4 TRAINER
+CREATE TABLE Trainer (
+    trainer_id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL,
+    specialization VARCHAR(100),
+    experience INT,
+    gender VARCHAR(10),
+    dob DATE,
+    phone VARCHAR(15),
+    email VARCHAR(100),
+    address VARCHAR(255),
+    manager_id INT,
+    FOREIGN KEY (manager_id) REFERENCES Manager(manager_id)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
+);
+SHOW TABLES;
+
+#5 MEMBERSHIP
+CREATE TABLE Membership (
+    membership_id INT PRIMARY KEY AUTO_INCREMENT,
+    start_date DATE,
+    status VARCHAR(50),
+    member_id INT,
+    FOREIGN KEY (member_id) REFERENCES Member(member_id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+SHOW TABLES;
+
+#6PAYMENT
+CREATE TABLE Payment (
+    payment_id INT PRIMARY KEY AUTO_INCREMENT,
+    payment_date DATE,
+    mode VARCHAR(50),
+    member_id INT,
+    FOREIGN KEY (member_id) REFERENCES Member(member_id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);SHOW TABLES;
+
+#7WORKOUT
+CREATE TABLE Workout (
+    workout_id INT PRIMARY KEY AUTO_INCREMENT,
+    difficulty VARCHAR(50),
+    status VARCHAR(50),
+    member_id INT,
+    trainer_id INT,
+    FOREIGN KEY (member_id) REFERENCES Member(member_id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+    FOREIGN KEY (trainer_id) REFERENCES Trainer(trainer_id)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
+);SHOW TABLES;
+
+#8 WORKOUT PLAN
+CREATE TABLE Workout_Plan (
+    plan_id INT PRIMARY KEY AUTO_INCREMENT,
+    start_date DATE,
+    status VARCHAR(50),
+    trainer_id INT,
+    FOREIGN KEY (trainer_id) REFERENCES Trainer(trainer_id)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
+);
+
+
+#9DIET
+CREATE TABLE Diet (
+    diet_id INT PRIMARY KEY AUTO_INCREMENT,
+    calories_target INT,
+    member_id INT,
+    trainer_id INT,
+    FOREIGN KEY (member_id) REFERENCES Member(member_id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+    FOREIGN KEY (trainer_id) REFERENCES Trainer(trainer_id)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
+);
+SHOW TABLES;
+
+# 10 DIET PLAN
+CREATE TABLE Diet_Plan (
+    diet_plan_id INT PRIMARY KEY AUTO_INCREMENT,
+    exercise_id INT,
+    sets INT,
+    trainer_id INT,
+    FOREIGN KEY (trainer_id) REFERENCES Trainer(trainer_id)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
+); SHOW TABLES;
+
+#11 EXERCISE
+CREATE TABLE Exercise (
+    tracker_id INT PRIMARY KEY AUTO_INCREMENT,
+    weight FLOAT,
+    calories_burned INT,
+    start_date DATE
+); SHOW TABLES;
+
+#12 SUPPLIMENTS
+CREATE TABLE Supplements (
+    supplement_id INT PRIMARY KEY AUTO_INCREMENT,
+    body_fat FLOAT,
+    dosage VARCHAR(100),
+    start_date DATE,
+    member_id INT,
+    FOREIGN KEY (member_id) REFERENCES Member(member_id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);SHOW TABLES;
+
+#13 EQUIPMENT_MAINTENANCE
+CREATE TABLE Equipment_Maintenance (
+    maintenance_id INT PRIMARY KEY AUTO_INCREMENT,
+    equipment_name VARCHAR(100),
+    condition_status VARCHAR(100),
+    last_service_date DATE,
+    incident_date DATE
+); 
+SHOW TABLES;
