@@ -1,23 +1,29 @@
 CREATE DATABASE Gym_Management_System;
 USE Gym_Management_System;
 
-#OWNER TABLE 
-CREATE TABLE Owner (
-    owner_id INT PRIMARY KEY AUTO_INCREMENT
+# 1 OWNER TABLE( TOP LEVEL)
+CREATE TABLE An_Owner (
+    owner_id INT PRIMARY KEY AUTO_INCREMENT,
+    owner_name VARCHAR(100)
 );
-SHOW TABLES;
+SHOW CREATE TABLE AN_OWNER;
+SHOW TABLES ;
+DESC AN_OWNER;
 
-#2 MANAGER
+#2 MANAGER(UNDER OWNER)
 CREATE TABLE Manager (
     manager_id INT PRIMARY KEY AUTO_INCREMENT,
+    manager_name VARCHAR(100),
     owner_id INT,
-    FOREIGN KEY (owner_id) REFERENCES Owner(owner_id)
+    FOREIGN KEY (owner_id) REFERENCES An_Owner(owner_id)
         ON DELETE CASCADE
         ON UPDATE CASCADE
 );
+DESC MANAGER;
 SHOW TABLES;
+SHOW CREATE TABLE MANAGER; 
 
-#3 MEMBER
+#3 MEMBER( UNDER MANAGER) 
 CREATE TABLE Member (
     member_id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(100) NOT NULL,
@@ -28,26 +34,25 @@ CREATE TABLE Member (
         ON UPDATE CASCADE
 );
 SHOW TABLES;
+SHOW CREATE TABLE MEMBER; 
+DESC member ;
 
-#4 TRAINER
+# 4 TRAINER (UNDER MANAGER)
 CREATE TABLE Trainer (
     trainer_id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(100) NOT NULL,
+    name VARCHAR(100),
     specialization VARCHAR(100),
     experience INT,
-    gender VARCHAR(10),
-    dob DATE,
-    phone VARCHAR(15),
-    email VARCHAR(100),
-    address VARCHAR(255),
     manager_id INT,
     FOREIGN KEY (manager_id) REFERENCES Manager(manager_id)
         ON DELETE SET NULL
         ON UPDATE CASCADE
 );
 SHOW TABLES;
+SHOW CREATE TABLE TRAINER;
+DESC TRAINER;
 
-#5 MEMBERSHIP
+# 5 MEMBERSHIP (UNDER MEMBER ,FOR ALL THE MEMBER IN GYM)
 CREATE TABLE Membership (
     membership_id INT PRIMARY KEY AUTO_INCREMENT,
     start_date DATE,
@@ -57,9 +62,11 @@ CREATE TABLE Membership (
         ON DELETE CASCADE
         ON UPDATE CASCADE
 );
+DESC MEMBERSHIP;
 SHOW TABLES;
+SHOW CREATE TABLE MEMBERSHIP;
 
-#6PAYMENT
+#6 PAYMENT (UNDER MEMBER)
 CREATE TABLE Payment (
     payment_id INT PRIMARY KEY AUTO_INCREMENT,
     payment_date DATE,
@@ -68,9 +75,12 @@ CREATE TABLE Payment (
     FOREIGN KEY (member_id) REFERENCES Member(member_id)
         ON DELETE CASCADE
         ON UPDATE CASCADE
-);SHOW TABLES;
+);
+DESC Table Payment ;
+SHOW TABLES;
+SHOW CREATE TABLE PAYMENT;
 
-#7WORKOUT
+#7 WORKOUT (MEMBER AND TRAINER ,BOTH ARE CONNECTED)
 CREATE TABLE Workout (
     workout_id INT PRIMARY KEY AUTO_INCREMENT,
     difficulty VARCHAR(50),
@@ -83,9 +93,13 @@ CREATE TABLE Workout (
     FOREIGN KEY (trainer_id) REFERENCES Trainer(trainer_id)
         ON DELETE SET NULL
         ON UPDATE CASCADE
-);SHOW TABLES;
+);
+SHOW TABLES;
+SHOW CREATE TABLE WORKOUT;
+DESC workout;
 
-#8 WORKOUT PLAN
+
+# 8 WORKOUT PLAN (UNDER TRAINER)
 CREATE TABLE Workout_Plan (
     plan_id INT PRIMARY KEY AUTO_INCREMENT,
     start_date DATE,
@@ -95,9 +109,11 @@ CREATE TABLE Workout_Plan (
         ON DELETE SET NULL
         ON UPDATE CASCADE
 );
+DESC Table workout_plan;
+SHOW TABLES; 
+SHOW CREATE TABLE WORKOUT_PLAN;
 
-
-#9DIET
+#9 DIET( CONNECTED WITH MEMBER AND TRAINER
 CREATE TABLE Diet (
     diet_id INT PRIMARY KEY AUTO_INCREMENT,
     calories_target INT,
@@ -110,28 +126,39 @@ CREATE TABLE Diet (
         ON DELETE SET NULL
         ON UPDATE CASCADE
 );
-SHOW TABLES;
+ SHOW TABLES;
+  SHOW CREATE TABLE DIET;
+  DESC Table diet;
+  
+#10 EXERCISE
+CREATE TABLE Exercise (
+    exercise_id INT PRIMARY KEY AUTO_INCREMENT,
+    weight FLOAT,
+    calories_burned INT,
+    start_date DATE
+);
+SHOW CREATE TABLE EXERCISE;
+show tables;
+DESC exercise;
 
-# 10 DIET PLAN
-CREATE TABLE Diet_Plan (
+#11 DIET PLAN ( CONNECTED WITH BOTH EXERCISE AND TRAINER)
+ CREATE TABLE Diet_Plan (
     diet_plan_id INT PRIMARY KEY AUTO_INCREMENT,
     exercise_id INT,
     sets INT,
     trainer_id INT,
+    FOREIGN KEY (exercise_id) REFERENCES Exercise(exercise_id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
     FOREIGN KEY (trainer_id) REFERENCES Trainer(trainer_id)
         ON DELETE SET NULL
         ON UPDATE CASCADE
-); SHOW TABLES;
+);
+DESC table diet_plan;
+SHOW TABLES;
+SHOW CREATE TABLE DIET_PLAN;
 
-#11 EXERCISE
-CREATE TABLE Exercise (
-    tracker_id INT PRIMARY KEY AUTO_INCREMENT,
-    weight FLOAT,
-    calories_burned INT,
-    start_date DATE
-); SHOW TABLES;
-
-#12 SUPPLIMENTS
+#12 SUPPLEMENTS( UNDER MEMBER)
 CREATE TABLE Supplements (
     supplement_id INT PRIMARY KEY AUTO_INCREMENT,
     body_fat FLOAT,
@@ -141,99 +168,31 @@ CREATE TABLE Supplements (
     FOREIGN KEY (member_id) REFERENCES Member(member_id)
         ON DELETE CASCADE
         ON UPDATE CASCADE
-);SHOW TABLES;
+);
+DESC Table supplements;
+SHOW TABLES;
+SHOW CREATE TABLE SUPPLEMENTS;
 
-#13 EQUIPMENT_MAINTENANCE
+#13 EQUIPMENT MAINTENANCE( CONNECTED WITH THE TRAINER)
 CREATE TABLE Equipment_Maintenance (
     maintenance_id INT PRIMARY KEY AUTO_INCREMENT,
     equipment_name VARCHAR(100),
     condition_status VARCHAR(100),
     last_service_date DATE,
-    incident_date DATE
-); 
+    incident_date DATE,
+    trainer_id INT,
+    FOREIGN KEY (trainer_id) REFERENCES Trainer(trainer_id)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
+);
+
 SHOW TABLES;
+SHOW CREATE TABLE EQUIPMENT_MAINTENANCE;
+DESC Table equipment_maintenance;
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
--- Select Database
-USE Gym_Management_System;
-
--- 1️⃣ Show all tables
-SELECT 'TABLE LIST' AS Section;
-SHOW TABLES;
-
--- 2️⃣ Show table structures
-SELECT 'TABLE STRUCTURES' AS Section;
-
-SHOW CREATE TABLE Owner;
-SHOW CREATE TABLE Manager;
-SHOW CREATE TABLE Member;
-SHOW CREATE TABLE Trainer;
-SHOW CREATE TABLE Membership;
-SHOW CREATE TABLE Payment;
-SHOW CREATE TABLE Workout;
-SHOW CREATE TABLE Workout_Plan;
-SHOW CREATE TABLE Diet;
-SHOW CREATE TABLE Diet_Plan;
-SHOW CREATE TABLE Exercise;
-SHOW CREATE TABLE Supplements;
-SHOW CREATE TABLE Equipment_Maintenance;
-
--- 3️⃣ Column Details (All tables together)
-SELECT 'COLUMN DETAILS' AS Section;
-
-SELECT 
-TABLE_NAME,
-COLUMN_NAME,
-COLUMN_TYPE,
-IS_NULLABLE,
-COLUMN_KEY,
-EXTRA
+SELECT TABLE_NAME, COLUMN_NAME
 FROM INFORMATION_SCHEMA.COLUMNS
-WHERE TABLE_SCHEMA = 'Gym_Management_System'
-ORDER BY TABLE_NAME;
-
--- 4️⃣ Foreign Keys
-SELECT 'FOREIGN KEYS' AS Section;
-
-SELECT 
-TABLE_NAME,
-COLUMN_NAME,
-REFERENCED_TABLE_NAME,
-REFERENCED_COLUMN_NAME,
-CONSTRAINT_NAME
-FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
-WHERE TABLE_SCHEMA = 'Gym_Management_System'
-AND REFERENCED_TABLE_NAME IS NOT NULL;
-
--- 5️⃣ Primary Keys + Indexes
-SELECT 'INDEX INFO' AS Section;
-
-SELECT 
-TABLE_NAME,
-INDEX_NAME,
-COLUMN_NAME
-FROM INFORMATION_SCHEMA.STATISTICS
-WHERE TABLE_SCHEMA = 'Gym_Management_System'
-ORDER BY TABLE_NAME;
-
--- 6️⃣ Row count of each table
-SELECT 'ROW COUNTS' AS Section;
-
-SELECT 
-TABLE_NAME,
-TABLE_ROWS
-FROM INFORMATION_SCHEMA.TABLES
 WHERE TABLE_SCHEMA = 'Gym_Management_System';
+
+show tables;
