@@ -5,13 +5,13 @@ CREATE TABLE An_Owner (
     owner_id INT PRIMARY KEY AUTO_INCREMENT,
     owner_name VARCHAR(100)
 );
-SHOW CREATE TABLE AN_OWNER;
 DESC AN_OWNER;
  SELECT * FROM an_owner;
 #2 MANAGER(UNDER OWNER)
 CREATE TABLE Manager (
     manager_id INT PRIMARY KEY AUTO_INCREMENT,
     manager_name VARCHAR(100),
+    email VARCHAR(100),
     owner_id INT,
     FOREIGN KEY (owner_id) REFERENCES An_Owner(owner_id)
         ON DELETE CASCADE
@@ -22,6 +22,7 @@ DESC MANAGER;
 CREATE TABLE Member (
     member_id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(100) NOT NULL,
+      phone_number VARCHAR(15),
     specialization VARCHAR(100),
     manager_id INT,
     FOREIGN KEY (manager_id) REFERENCES Manager(manager_id)
@@ -31,19 +32,37 @@ CREATE TABLE Member (
 DESC member ;
 select * from member;
 # 4 TRAINER (UNDER MANAGER)
+
 CREATE TABLE Trainer (
     trainer_id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(100),
     specialization VARCHAR(100),
     experience INT,
+    certification VARCHAR(100),
+    join_date DATE,
     manager_id INT,
     FOREIGN KEY (manager_id) REFERENCES Manager(manager_id)
         ON DELETE SET NULL
         ON UPDATE CASCADE
 );
- DESC TRAINER;
-Select * from trainer;
-# 5 MEMBERSHIP (UNDER MEMBER ,FOR ALL THE MEMBER IN GYM)
+
+-- DERIVED VIEW → Trainer Experience
+CREATE VIEW Trainer_Experience AS
+SELECT 
+    trainer_id,
+    name,
+    TIMESTAMPDIFF(YEAR, join_date, CURDATE()) AS experience_years
+FROM Trainer;
+
+
+
+SELECT TABLE_NAME, COLUMN_NAME
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_SCHEMA = 'Gym_Management_System';
+
+show tables;
+
+-- 5 MEMBERSHIP (UNDER MEMBER)
 CREATE TABLE Membership (
     membership_id INT PRIMARY KEY AUTO_INCREMENT,
     start_date DATE,
@@ -53,28 +72,33 @@ CREATE TABLE Membership (
         ON DELETE CASCADE
         ON UPDATE CASCADE
 );
-DESC MEMBERSHIP;
- SELECT * FROM membership;
-#6 PAYMENT (UNDER MEMBER)
+
+-- 6 PAYMENT (UNDER MEMBER)
 CREATE TABLE Payment (
-    payment_id INT AUTO_INCREMENT,
+    payment_id INT PRIMARY KEY AUTO_INCREMENT,
     payment_date DATE,
     mode VARCHAR(50),
+    transaction_status VARCHAR(50),
     member_id INT,
-    PRIMARY KEY (payment_id),
-    CONSTRAINT fk_member
-        FOREIGN KEY (member_id)
-        REFERENCES Member(member_id)
+    FOREIGN KEY (member_id) REFERENCES Member(member_id)
         ON DELETE CASCADE
         ON UPDATE CASCADE
 );
-DESC Table Payment ;
-SELECT * FROM Payment;
-#7 WORKOUT (MEMBER AND TRAINER ,BOTH ARE CONNECTED)
+
+-- DERIVED VIEW → Total Payments
+CREATE VIEW Member_Total_Payments AS
+SELECT 
+    member_id,
+    COUNT(payment_id) AS total_payments
+FROM Payment
+GROUP BY member_id;
+
+-- 7 WORKOUT (MEMBER + TRAINER)
 CREATE TABLE Workout (
     workout_id INT PRIMARY KEY AUTO_INCREMENT,
     difficulty VARCHAR(50),
     status VARCHAR(50),
+    exercise_name VARCHAR(100),
     member_id INT,
     trainer_id INT,
     FOREIGN KEY (member_id) REFERENCES Member(member_id)
@@ -84,21 +108,16 @@ CREATE TABLE Workout (
         ON DELETE SET NULL
         ON UPDATE CASCADE
 );
-DESC workout;
-SELECT * FROM workout;
-# 8 WORKOUT PLAN (UNDER TRAINER)
-CREATE TABLE Workout_Plan (
-    plan_id INT PRIMARY KEY AUTO_INCREMENT,
-    start_date DATE,
-    status VARCHAR(50),
-    trainer_id INT,
-    FOREIGN KEY (trainer_id) REFERENCES Trainer(trainer_id)
-        ON DELETE SET NULL
-        ON UPDATE CASCADE
-);
-DESC Table workout_plan;
- SELECT * FROM workout_plan;
-#9 DIET( CONNECTED WITH MEMBER AND TRAINER
+
+-- DERIVED VIEW → Workout Count
+CREATE VIEW Member_Workout_Count AS
+SELECT 
+    member_id,
+    COUNT(workout_id) AS total_workouts
+FROM Workout
+GROUP BY member_id;
+
+-- 8 DIET (MEMBER + TRAINER)
 CREATE TABLE Diet (
     diet_id INT PRIMARY KEY AUTO_INCREMENT,
     calories_target INT,
@@ -111,22 +130,8 @@ CREATE TABLE Diet (
         ON DELETE SET NULL
         ON UPDATE CASCADE
 );
-  DESC Table diet;
-SELECT * FROM diet;
-#10 SUPPLEMENTS( UNDER MEMBER)
-CREATE TABLE Supplements (
-    supplement_id INT PRIMARY KEY AUTO_INCREMENT,
-    body_fat FLOAT,
-    dosage VARCHAR(100),
-    start_date DATE,
-    member_id INT,
-    FOREIGN KEY (member_id) REFERENCES Member(member_id)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE
-);
-DESC Table supplements;
-SELECT * FROM supplements;
-#11 EQUIPMENT MAINTENANCE( CONNECTED WITH THE TRAINER)
+
+-- 9 EQUIPMENT MAINTENANCE
 CREATE TABLE Equipment_Maintenance (
     maintenance_id INT PRIMARY KEY AUTO_INCREMENT,
     equipment_name VARCHAR(100),
@@ -138,11 +143,5 @@ CREATE TABLE Equipment_Maintenance (
         ON DELETE SET NULL
         ON UPDATE CASCADE
 );
-DESC Table equipment_maintenance;
- SELECT * FROM equipment_maintenance;
-SELECT TABLE_NAME, COLUMN_NAME
-FROM INFORMATION_SCHEMA.COLUMNS
-WHERE TABLE_SCHEMA = 'Gym_Management_System';
-
-show tables;
-
+-- SHOW ALL TABLES
+SHOW TABLES;
