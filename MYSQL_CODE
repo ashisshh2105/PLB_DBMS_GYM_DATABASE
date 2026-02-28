@@ -32,12 +32,12 @@ CREATE TABLE Member (
 DESC member ;
 select * from member;
 # 4 TRAINER (UNDER MANAGER)
-
+drop table trainer;
 CREATE TABLE Trainer (
     trainer_id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(100),
     specialization VARCHAR(100),
-    experience INT,
+    experience_year INT,
     certification VARCHAR(100),
     join_date DATE,
     manager_id INT,
@@ -54,25 +54,22 @@ SELECT
     TIMESTAMPDIFF(YEAR, join_date, CURDATE()) AS experience_years
 FROM Trainer;
 
-
-
-SELECT TABLE_NAME, COLUMN_NAME
-FROM INFORMATION_SCHEMA.COLUMNS
-WHERE TABLE_SCHEMA = 'Gym_Management_System';
-
-show tables;
-
 -- 5 MEMBERSHIP (UNDER MEMBER)
 CREATE TABLE Membership (
     membership_id INT PRIMARY KEY AUTO_INCREMENT,
     start_date DATE,
     status VARCHAR(50),
     member_id INT,
+    payment_id INT,
+
     FOREIGN KEY (member_id) REFERENCES Member(member_id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    FOREIGN KEY (payment_id) REFERENCES Payment(payment_id)
         ON DELETE CASCADE
         ON UPDATE CASCADE
 );
-
 -- 6 PAYMENT (UNDER MEMBER)
 CREATE TABLE Payment (
     payment_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -145,3 +142,7 @@ CREATE TABLE Equipment_Maintenance (
 );
 -- SHOW ALL TABLES
 SHOW TABLES;
+
+SELECT TABLE_NAME, COLUMN_NAME
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_SCHEMA = 'Gym_Management_System';
