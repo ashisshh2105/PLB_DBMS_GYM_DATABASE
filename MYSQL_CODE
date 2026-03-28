@@ -1,12 +1,14 @@
 CREATE DATABASE Gym_Management_System;
 USE Gym_Management_System;
+
 # 1 OWNER TABLE( TOP LEVEL)
 CREATE TABLE An_Owner (
     owner_id INT PRIMARY KEY AUTO_INCREMENT,
     owner_name VARCHAR(100)
 );
 DESC AN_OWNER;
- SELECT * FROM an_owner;
+SELECT * FROM an_owner;
+
 #2 MANAGER(UNDER OWNER)
 CREATE TABLE Manager (
     manager_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -18,21 +20,22 @@ CREATE TABLE Manager (
         ON UPDATE CASCADE
 );
 DESC MANAGER;
+
 #3 MEMBER( UNDER MANAGER) 
 CREATE TABLE Member (
     member_id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(100) NOT NULL,
-      phone_number VARCHAR(15),
+    phone_number VARCHAR(15),
     specialization VARCHAR(100),
     manager_id INT,
     FOREIGN KEY (manager_id) REFERENCES Manager(manager_id)
         ON DELETE SET NULL
         ON UPDATE CASCADE
 );
-DESC member ;
-select * from member;
+DESC member;
+SELECT * FROM member;
+
 # 4 TRAINER (UNDER MANAGER)
-drop table trainer;
 CREATE TABLE Trainer (
     trainer_id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(100),
@@ -54,23 +57,9 @@ SELECT
     TIMESTAMPDIFF(YEAR, join_date, CURDATE()) AS experience_years
 FROM Trainer;
 
--- 5 MEMBERSHIP (UNDER MEMBER)
-CREATE TABLE Membership (
-    membership_id INT PRIMARY KEY AUTO_INCREMENT,
-    start_date DATE,
-    status VARCHAR(50),
-    member_id INT,
-    payment_id INT,
+DESC TRAINER;
 
-    FOREIGN KEY (member_id) REFERENCES Member(member_id)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE,
-
-    FOREIGN KEY (payment_id) REFERENCES Payment(payment_id)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE
-);
--- 6 PAYMENT (UNDER MEMBER)
+-- 6 PAYMENT (UNDER MEMBER)  🔥 FIXED ORDER
 CREATE TABLE Payment (
     payment_id INT PRIMARY KEY AUTO_INCREMENT,
     payment_date DATE,
@@ -89,6 +78,25 @@ SELECT
     COUNT(payment_id) AS total_payments
 FROM Payment
 GROUP BY member_id;
+
+DESC PAYMENT;
+
+-- 5 MEMBERSHIP (UNDER MEMBER)
+CREATE TABLE Membership (
+    membership_id INT PRIMARY KEY AUTO_INCREMENT,
+    start_date DATE,
+    status VARCHAR(50),
+    member_id INT,
+    payment_id INT,
+    FOREIGN KEY (member_id) REFERENCES Member(member_id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+    FOREIGN KEY (payment_id) REFERENCES Payment(payment_id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+
+DESC MEMBERSHIP;
 
 -- 7 WORKOUT (MEMBER + TRAINER)
 CREATE TABLE Workout (
@@ -114,6 +122,8 @@ SELECT
 FROM Workout
 GROUP BY member_id;
 
+DESC WORKOUT;
+
 -- 8 DIET (MEMBER + TRAINER)
 CREATE TABLE Diet (
     diet_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -128,6 +138,8 @@ CREATE TABLE Diet (
         ON UPDATE CASCADE
 );
 
+DESC DIET;
+
 -- 9 EQUIPMENT MAINTENANCE
 CREATE TABLE Equipment_Maintenance (
     maintenance_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -140,6 +152,9 @@ CREATE TABLE Equipment_Maintenance (
         ON DELETE SET NULL
         ON UPDATE CASCADE
 );
+
+DESC equipment_maintenance;
+
 -- SHOW ALL TABLES
 SHOW TABLES;
 
