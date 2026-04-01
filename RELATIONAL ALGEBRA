@@ -1,0 +1,29 @@
+-- 1
+π specialization (Member)
+
+-- 2
+π owner_name (An_Owner)
+
+-- 3
+σ owner_id = 1 (Manager)
+
+-- 4
+σ experience_year > 3 (Trainer)
+
+-- 5
+σ transaction_status = 'Completed' (Payment)
+
+-- 6
+σ status = 'Active' (Membership)
+
+-- 7
+π exercise_name ( σ difficulty = 'hard' (Workout) )
+
+-- 8
+π exercise_name, calories_target ( Workout ⨝ Diet )
+
+-- 9
+π manager_name, equipment_name ( Manager ⨝ Trainer ⨝ Equipment_Maintenance )
+
+-- 10
+π name, payment_date ( Member ⨝ Payment )
