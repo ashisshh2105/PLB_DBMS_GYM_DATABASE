@@ -1,0 +1,38 @@
+-- 1
+SELECT DISTINCT specialization FROM Member;
+
+-- 2
+SELECT owner_name FROM An_Owner;
+
+-- 3
+SELECT * FROM Manager WHERE owner_id = 1;
+
+-- 4
+SELECT * FROM Trainer WHERE experience_year > 3;
+
+-- 5
+SELECT * FROM Payment 
+WHERE transaction_status = 'Completed';
+
+-- 6
+SELECT * FROM Membership WHERE status = 'Active';
+
+-- 7
+SELECT exercise_name FROM Workout 
+WHERE difficulty = 'hard';
+
+-- 8
+SELECT w.exercise_name, d.calories_target
+FROM Workout w, Diet d
+WHERE w.member_id = d.member_id;
+
+-- 9
+SELECT m.manager_name, e.equipment_name
+FROM Manager m, Trainer t, Equipment_Maintenance e
+WHERE m.manager_id = t.manager_id 
+AND t.trainer_id = e.trainer_id;
+
+-- 10
+SELECT m.name, p.payment_date
+FROM Member m, Payment p
+WHERE m.member_id = p.member_id;
