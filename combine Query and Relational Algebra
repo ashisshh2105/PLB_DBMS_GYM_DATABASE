@@ -1,58 +1,80 @@
-#1 Retrieve all unique specializations of members.
-SELECT DISTINCT specialization FROM Member;
-#(RA) π specialization (Member)
+#1Owner + Manager (kaunsa manager kis owner ke under hai)
+SELECT o.owner_name, m.manager_name
+FROM An_Owner o, Manager m
+WHERE o.owner_id = m.owner_id;
 
+#(RA) π owner_name, manager_name ( An_Owner ⨝ Manager )
 
-#2 Retrieve names of all owners.
-SELECT owner_name FROM An_Owner; 
- 
- #(RA) π owner_name (An_Owner)
- 
- #3 Retrieve all managers under owner with ID = 1.
- SELECT * FROM Manager WHERE owner_id = 1;
- 
- #(RA) σ owner_id = 1 (Manager)
- 
- #4 Retrieve trainers with more than 3 years of experience
- SELECT * FROM Trainer WHERE experience_year > 3;
- 
- #(RA) σ experience_year > 3 (Trainer)
- 
-#5 Retrieve all completed payments.
-SELECT * FROM Payment 
-WHERE transaction_status = 'Completed';
-
-#(RA) σ transaction_status = 'Completed' (Payment)
-
-#6 Retrieve all active memberships
-SELECT * FROM Membership WHERE status = 'Active';
-
- #(RA) σ status = 'Active' (Membership)
- 
- #7 Retrieve all workout types of members.
- SELECT exercise_name FROM Workout where difficulty ='hard';
- 
- #(RA) π exercise_name ( σ difficulty = 'hard' (Workout) )
- 
- #8 Retrieve exercise names and diet plans for members.
-SELECT w.exercise_name, d.calories_target
-FROM Workout w, Diet d
-WHERE w.member_id = d.member_id;
- 
-  #(RA) π exercise_name, calories_target ( Workout ⨝ Diet )
-  
-  #9 Retrieve manager names along with equipment handled by trainers under them.
-  SELECT m.manager_name, e.equipment_name
-FROM Manager m, Trainer t, Equipment_Maintenance e
-WHERE m.manager_id = t.manager_id 
-AND t.trainer_id = e.trainer_id; 
-
-#(RA) π manager_name, equipment_name ( Manager ⨝ Trainer ⨝ Equipment_Maintenance )
-
-# 10 Retrieve member names and payment dates.
+#2Member + Payment (kis member ne kab payment kiya)
 SELECT m.name, p.payment_date
 FROM Member m, Payment p
-WHERE m.member_id = p.member_id; 
- 
- #(RA) π name, payment_date ( Member ⨝ Payment )
- 
+WHERE m.member_id = p.member_id;
+# (RA) π name, payment_date ( Member ⨝ Payment )
+
+# 3Member + Manager (kaunsa member kis manager ke under hai)
+SELECT m.name, mg.manager_name
+FROM Member m, Manager mg
+WHERE m.manager_id = mg.manager_id;
+#(RA)π name, manager_name ( Member ⨝ Manager ) 
+
+#4Group By (Specialization wise count)Number of members in each specialization
+SELECT specialization, COUNT(*) AS total
+FROM Member
+GROUP BY specialization;
+# RA -  γ specialization, COUNT(member_id) (Member)
+
+#5 Count trainers under each manager
+SELECT manager_id, COUNT(*) AS total_trainers
+FROM Trainer
+GROUP BY manager_id;
+# RA - γ manager_id, COUNT(trainer_id) (Trainer)
+
+#6 Member + Workout + Diet
+SELECT m.name, w.exercise_name, d.calories_target
+FROM Member m, Workout w, Diet d
+WHERE m.member_id = w.member_id
+AND m.member_id = d.member_id;
+
+# π name, exercise_name, calories_target( Member ⨝ Workout ⨝ Diet )
+
+
+#7Manager + Member + Trainer
+SELECT mg.manager_name, m.name, t.name
+FROM Manager mg, Member m, Trainer t
+WHERE mg.manager_id = m.manager_id
+AND mg.manager_id = t.manager_id;
+
+# π manager_name, member_name, trainer_name( Manager ⨝ Member ⨝ Trainer )
+
+#8 Card payments that are completed
+SELECT * FROM Payment
+WHERE mode = 'Card' AND transaction_status = 'Completed';
+
+# RA σ mode = 'Card' ∧ transaction_status = 'Completed' (Payment)
+
+#9 Members with calories < 2000
+SELECT * FROM Diet
+WHERE calories_target < 2000;
+
+#(RA)σ calories_target < 2000 (Diet)
+
+#10 Equipment handled by experienced trainers (>3 years)
+SELECT e.equipment_name, t.name
+FROM Equipment_Maintenance e, Trainer t
+WHERE e.trainer_id = t.trainer_id
+AND t.experience_year > 3;
+
+#π equipment_name, trainer_name( σ experience_year > 3 ( Equipment_Maintenance ⨝ Trainer ) )
+
+#11 Full system summary
+SELECT o.owner_name, COUNT(DISTINCT mem.member_id) AS members,
+COUNT(DISTINCT t.trainer_id) AS trainers,
+COUNT(DISTINCT w.workout_id) AS workouts
+FROM An_Owner o, Manager m, Member mem, Trainer t, Workout w
+WHERE o.owner_id = m.owner_id
+AND m.manager_id = mem.manager_id
+AND m.manager_id = t.manager_id
+AND mem.member_id = w.member_id
+GROUP BY o.owner_name;
+
+#γ owner_name, COUNT(member_id), COUNT(trainer_id), COUNT(workout_id)( An_Owner ⨝ Manager ⨝ Member ⨝ Trainer ⨝ Workout )
