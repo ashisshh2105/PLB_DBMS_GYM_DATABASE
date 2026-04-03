@@ -1,38 +1,52 @@
--- 1
-SELECT DISTINCT specialization FROM Member;
+-- Q1 Owner + Manager
+SELECT o.owner_name, m.manager_name
+FROM An_Owner o, Manager m
+WHERE o.owner_id = m.owner_id;
 
--- 2
-SELECT owner_name FROM An_Owner;
-
--- 3
-SELECT * FROM Manager WHERE owner_id = 1;
-
--- 4
-SELECT * FROM Trainer WHERE experience_year > 3;
-
--- 5
-SELECT * FROM Payment 
-WHERE transaction_status = 'Completed';
-
--- 6
-SELECT * FROM Membership WHERE status = 'Active';
-
--- 7
-SELECT exercise_name FROM Workout 
-WHERE difficulty = 'hard';
-
--- 8
-SELECT w.exercise_name, d.calories_target
-FROM Workout w, Diet d
-WHERE w.member_id = d.member_id;
-
--- 9
-SELECT m.manager_name, e.equipment_name
-FROM Manager m, Trainer t, Equipment_Maintenance e
-WHERE m.manager_id = t.manager_id 
-AND t.trainer_id = e.trainer_id;
-
--- 10
-SELECT m.name, p.payment_date
+-- Q2 Member + Payment
+SELECT m.member_name, p.payment_date
 FROM Member m, Payment p
 WHERE m.member_id = p.member_id;
+
+-- Q3 Member + Manager
+SELECT m.member_name, mg.manager_name
+FROM Member m, Manager mg
+WHERE m.manager_id = mg.manager_id;
+
+-- Q4 Specialization wise count
+SELECT specialization, COUNT(*) AS total
+FROM Member
+GROUP BY specialization;
+
+-- Q5 Trainers per manager
+SELECT manager_id, COUNT(*) AS total_trainers
+FROM Trainer
+GROUP BY manager_id;
+
+-- Q6 Member + Workout + Diet
+SELECT m.member_name, w.workout_type, d.calories
+FROM Member m, Workout w, Diet d
+WHERE m.member_id = w.member_id
+AND m.member_id = d.member_id;
+
+-- Q7 Manager + Member + Trainer
+SELECT mg.manager_name, m.member_name, t.trainer_name
+FROM Manager mg, Member m, Trainer t
+WHERE mg.manager_id = m.manager_id
+AND mg.manager_id = t.manager_id;
+
+-- Q8 Card payments completed
+SELECT *
+FROM Payment
+WHERE mode = 'Card' AND transaction_status = 'Completed';
+
+-- Q9 Calories < 2000
+SELECT *
+FROM Diet
+WHERE calories < 2000;
+
+-- Q10 Equipment + experienced trainers
+SELECT e.equipment_name, t.trainer_name
+FROM Equipment_Maintenance e, Trainer t
+WHERE e.trainer_id = t.trainer_id
+AND t.experience_year > 3;
