@@ -1,29 +1,31 @@
--- 1
-π specialization (Member)
+-- Q1
+π owner_name, manager_name (An_Owner ⨝ Manager)
 
--- 2
-π owner_name (An_Owner)
+-- Q2
+π member_name, payment_date (Member ⨝ Payment)
 
--- 3
-σ owner_id = 1 (Manager)
+-- Q3
+π member_name, manager_name (Member ⨝ Manager)
 
--- 4
-σ experience_year > 3 (Trainer)
+-- Q4
+γ specialization, COUNT(*) (Member)
 
--- 5
-σ transaction_status = 'Completed' (Payment)
+-- Q5
+γ manager_id, COUNT(*) (Trainer)
 
--- 6
-σ status = 'Active' (Membership)
+-- Q6
+π member_name, workout_type, calories (Member ⨝ Workout ⨝ Diet)
 
--- 7
-π exercise_name ( σ difficulty = 'hard' (Workout) )
+-- Q7
+π manager_name, member_name, trainer_name 
+(Manager ⨝ Member ⨝ Trainer)
 
--- 8
-π exercise_name, calories_target ( Workout ⨝ Diet )
+-- Q8
+σ mode = 'Card' ∧ transaction_status = 'Completed' (Payment)
 
--- 9
-π manager_name, equipment_name ( Manager ⨝ Trainer ⨝ Equipment_Maintenance )
+-- Q9
+σ calories < 2000 (Diet)
 
--- 10
-π name, payment_date ( Member ⨝ Payment )
+-- Q10
+π equipment_name, trainer_name 
+(σ experience_year > 3 (Equipment_Maintenance ⨝ Trainer))
