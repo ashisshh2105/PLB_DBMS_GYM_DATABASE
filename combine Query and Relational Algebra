@@ -66,15 +66,4 @@ AND t.experience_year > 3;
 
 #π equipment_name, trainer_name( σ experience_year > 3 ( Equipment_Maintenance ⨝ Trainer ) )
 
-#11 Full system summary
-SELECT o.owner_name, COUNT(DISTINCT mem.member_id) AS members,
-COUNT(DISTINCT t.trainer_id) AS trainers,
-COUNT(DISTINCT w.workout_id) AS workouts
-FROM An_Owner o, Manager m, Member mem, Trainer t, Workout w
-WHERE o.owner_id = m.owner_id
-AND m.manager_id = mem.manager_id
-AND m.manager_id = t.manager_id
-AND mem.member_id = w.member_id
-GROUP BY o.owner_name;
 
-#γ owner_name, COUNT(member_id), COUNT(trainer_id), COUNT(workout_id)( An_Owner ⨝ Manager ⨝ Member ⨝ Trainer ⨝ Workout )
